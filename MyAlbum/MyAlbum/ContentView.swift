@@ -25,36 +25,39 @@ struct CameraView: View {
     @State private var identifier: String = ""
     
     var body: some View {
-        List{
-            Button(action: {
-                showCameraPicker = true
-                sourceType = .camera
-            }, label: {
-                Text("Camera")
-            })
-            Button(action: {
-                showCameraPicker = true
-                sourceType = .photoLibrary
-            }, label: {
-                Text("photo")
-            })
-            
-            
-            Image(uiImage: image)
-                .resizable()
-                .aspectRatio(contentMode: .fit)
-            
-            Text(self.result)
-        }
-        .sheet(isPresented: $showCameraPicker,
-               content: {
-            ImagePicker(sourceType: self.sourceType) { image in
-                self.image = image
-                (self.identifier, self.confidence) = self.classfier.classify(image: image)
-                self.result = self.identifier + " : " + self.confidence
-                self.addItem(classfier: self.identifier, image: image)
+        NavigationView {
+            List{
+                Button(action: {
+                    showCameraPicker = true
+                    sourceType = .camera
+                }, label: {
+                    Text("Camera")
+                })
+                Button(action: {
+                    showCameraPicker = true
+                    sourceType = .photoLibrary
+                }, label: {
+                    Text("photo")
+                })
+                
+                
+                Image(uiImage: image)
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                
+                Text(self.result)
             }
-        })
+            .sheet(isPresented: $showCameraPicker,
+                   content: {
+                ImagePicker(sourceType: self.sourceType) { image in
+                    self.image = image
+                    (self.identifier, self.confidence) = self.classfier.classify(image: image)
+                    self.result = self.identifier + " : " + self.confidence
+                    self.addItem(classfier: self.identifier, image: image)
+                }
+            })
+            .navigationTitle("Classify")
+        }
     }
     
     private func addItem(classfier: String, image: UIImage) {
@@ -80,10 +83,12 @@ struct CameraView: View {
 struct KindsView: View {
     @Environment(\.managedObjectContext) private var viewContext
     
-    @FetchRequest(
+    @SectionedFetchRequest(
+        sectionIdentifier: \PictureItem.classifier!,
         sortDescriptors: [NSSortDescriptor(keyPath: \PictureItem.timestamp, ascending: true)],
         animation: .default)
-    private var items: FetchedResults<PictureItem>
+    
+    private var items: SectionedFetchResults<String, PictureItem>
     
     @State private var searchTerm = ""
     
@@ -103,18 +108,30 @@ struct KindsView: View {
 
         // 4
         items.nsPredicate = NSPredicate(
-          format: "name contains[cd] %@",
+          format: "classifier contains[cd] %@",
           newValue)
       }
     }
 
     
     var body: some View {
-        Button(action: {
-            
-        }, label: {
-            Text("Camera")
-        })
+        NavigationView {
+            List {
+                ForEach(items) { item in
+                    Section(header: Text(item.id)) {
+                        ForEach(item) { picInfo in
+                            NavigationLink {
+                                Text("A")
+                            } label: {
+                                Text(picInfo.timestamp!, formatter: itemFormatter)
+                            }
+                        }
+                    }
+                }
+            }
+            .searchable(text: searchQuery)
+            .navigationTitle("Kinds")
+        }
     }
     
     
@@ -157,7 +174,7 @@ struct AllView: View {
                 }
             }
             .padding(.horizontal)
-            .navigationTitle("ALL")
+            .navigationTitle("All")
         }
     }
 }
@@ -194,7 +211,7 @@ struct ContentView: View {
                 .environment(\.managedObjectContext, self.viewContext)
                 .tabItem({
                     Image(systemName: "camera.circle")
-                    Text("camera")
+                    Text("classify")
                 })
             AllView()
                 .tabItem({
