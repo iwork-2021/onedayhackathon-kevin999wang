@@ -48,14 +48,14 @@ struct CameraView: View {
             .toolbar {
                 ToolbarItemGroup(placement: .navigationBarTrailing) {
                     Button(action: {
+                        self.sourceType = .camera
                         showCameraPicker = true
-                        sourceType = .camera
                     }, label: {
                         Image(systemName: "camera.viewfinder")
                     })
                     Button(action: {
+                        self.sourceType = .photoLibrary
                         showCameraPicker = true
-                        sourceType = .photoLibrary
                     }, label: {
                         Image(systemName: "photo.circle")
                     })
@@ -171,6 +171,11 @@ struct KindsView: View {
     
 }
 
+
+extension Int: Identifiable {
+    public var id: Int { self }
+}
+
 struct AllView: View {
     @Environment(\.managedObjectContext) private var viewContext
     
@@ -180,6 +185,7 @@ struct AllView: View {
     private var items: FetchedResults<PictureItem>
     
     @State private var showingPopover = false
+    @State private var selectedItem: PictureItem?
     
     var body: some View{
         NavigationView {
@@ -190,20 +196,36 @@ struct AllView: View {
                         CardView(image: img)
                             .onTapGesture {
                                 self.showingPopover = true
+                                self.selectedItem = item
                             }
-                            .sheet(isPresented: $showingPopover, content: {
-                                VStack {
-                                    Text("as")
-                                    
-                                    Image(uiImage: img)
-                                        .resizable()
-                                        .scaledToFill()
-                                        .frame(width: 340, height: 600)
-                                        .clipped()
-                                        .cornerRadius(9)
-                                      
-                                }
-                            })
+//                            .popover(isPresented: $showingPopover, content: {
+//                                VStack {
+//                                    Text(item.classifier!)
+//                                        .font(Font.custom("Times New Roman", size: 30))
+//
+//                                    Image(uiImage: img)
+//                                        .resizable()
+//                                        .scaledToFill()
+//                                        .frame(width: 340, height: 600)
+//                                        .clipped()
+//                                        .cornerRadius(9)
+//
+//                                }
+//                            })
+                    }
+                }
+                .sheet(item: self.$selectedItem) { item in
+                    VStack {
+                        Text(item.classifier!)
+                            .font(Font.custom("Times New Roman", size: 30))
+                        
+                        Image(uiImage: UIImage(data: item.pic!)!)
+                            .resizable()
+                            .scaledToFill()
+                            .frame(width: 340, height: 600)
+                            .clipped()
+                            .cornerRadius(9)
+                          
                     }
                 }
             }
@@ -212,6 +234,7 @@ struct AllView: View {
         }
     }
 }
+
 
 struct CardView: View {
     let image: UIImage
