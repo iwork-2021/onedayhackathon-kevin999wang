@@ -27,25 +27,14 @@ struct CameraView: View {
     var body: some View {
         NavigationView {
             List{
-                Button(action: {
-                    showCameraPicker = true
-                    sourceType = .camera
-                }, label: {
-                    Text("Camera")
-                })
-                Button(action: {
-                    showCameraPicker = true
-                    sourceType = .photoLibrary
-                }, label: {
-                    Text("photo")
-                })
-                
+                Text(self.result)
+                    .frame(maxWidth: .infinity, alignment: .center)
+                    .font(Font.custom("zapfino", size: 20))
                 
                 Image(uiImage: image)
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                 
-                Text(self.result)
             }
             .sheet(isPresented: $showCameraPicker,
                    content: {
@@ -56,6 +45,22 @@ struct CameraView: View {
                     self.addItem(classfier: self.identifier, image: image)
                 }
             })
+            .toolbar {
+                ToolbarItemGroup(placement: .navigationBarTrailing) {
+                    Button(action: {
+                        showCameraPicker = true
+                        sourceType = .camera
+                    }, label: {
+                        Image(systemName: "camera.viewfinder")
+                    })
+                    Button(action: {
+                        showCameraPicker = true
+                        sourceType = .photoLibrary
+                    }, label: {
+                        Image(systemName: "photo.circle")
+                    })
+                }
+            }
             .navigationTitle("Classify")
         }
     }
@@ -121,9 +126,23 @@ struct KindsView: View {
                     Section(header: Text(item.id)) {
                         ForEach(item) { picInfo in
                             NavigationLink {
-                                Text("A")
+                                Image(uiImage: UIImage(data: picInfo.pic!)!)
+                                    .resizable()
+                                    .scaledToFill()
+                                    .frame(width: 340, height: 580)
+                                    .clipped()
+                                    .cornerRadius(9)
                             } label: {
                                 Text(picInfo.timestamp!, formatter: itemFormatter)
+                            }
+                        }
+                        .onDelete { indexSet in
+                            withAnimation {
+                                self.deleteItem(
+                                    for: indexSet,
+                                    section: item,
+                                    viewContext: viewContext
+                                )
                             }
                         }
                     }
@@ -134,6 +153,21 @@ struct KindsView: View {
         }
     }
     
+    
+    private func deleteItem(
+        for indexSet: IndexSet,
+        section: SectionedFetchResults<String, PictureItem>.Element,
+        viewContext: NSManagedObjectContext
+      ) {
+        indexSet.map { section[$0] }.forEach(viewContext.delete)
+
+        do {
+          try viewContext.save()
+        } catch {
+          let nsError = error as NSError
+          fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
+        }
+      }
     
 }
 
