@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		BB119C81277192A900A29620 /* snacks.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = BB119C80277192A900A29620 /* snacks.mlmodel */; };
 		BB612F22277170E1003859A7 /* MyAlbumApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB612F21277170E1003859A7 /* MyAlbumApp.swift */; };
 		BB612F24277170E1003859A7 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB612F23277170E1003859A7 /* ContentView.swift */; };
 		BB612F26277170E2003859A7 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BB612F25277170E2003859A7 /* Assets.xcassets */; };
@@ -38,6 +39,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		BB119C80277192A900A29620 /* snacks.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; name = snacks.mlmodel; path = ../snacks.mlmodel; sourceTree = "<group>"; };
 		BB612F1E277170E1003859A7 /* MyAlbum.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MyAlbum.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		BB612F21277170E1003859A7 /* MyAlbumApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyAlbumApp.swift; sourceTree = "<group>"; };
 		BB612F23277170E1003859A7 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -82,6 +84,7 @@
 		BB612F15277170E1003859A7 = {
 			isa = PBXGroup;
 			children = (
+				BB119C80277192A900A29620 /* snacks.mlmodel */,
 				BB612F20277170E1003859A7 /* MyAlbum */,
 				BB612F36277170E2003859A7 /* MyAlbumTests */,
 				BB612F40277170E2003859A7 /* MyAlbumUITests */,
@@ -270,6 +273,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				BB612F2B277170E2003859A7 /* Persistence.swift in Sources */,
+				BB119C81277192A900A29620 /* snacks.mlmodel in Sources */,
 				BB612F53277184A1003859A7 /* classify.swift in Sources */,
 				BB612F24277170E1003859A7 /* ContentView.swift in Sources */,
 				BB612F512771768F003859A7 /* camera.swift in Sources */,
